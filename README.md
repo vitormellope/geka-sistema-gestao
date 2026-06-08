@@ -1,36 +1,68 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Sistema de Gestão GEKA
 
-## Getting Started
+Plataforma interna de gerenciamento de demandas para empresa de comunicação visual.
 
-First, run the development server:
+## Stack
+
+- **Backend:** FastAPI + SQLAlchemy + SQLite + JWT
+- **Frontend:** React + TypeScript + Vite + Tailwind CSS
+
+## Setup Local
+
+### Backend
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cd backend
+python -m venv .venv
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+uvicorn main:app --reload --port 8000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+O backend inicia em `http://localhost:8000`. Um usuário admin é criado automaticamente:
+- **Email:** admin@geka.com
+- **Senha:** geka2024
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Frontend
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
-## Learn More
+O frontend inicia em `http://localhost:5173` e faz proxy das chamadas `/api` para o backend.
 
-To learn more about Next.js, take a look at the following resources:
+## Deploy
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Frontend (Vercel)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. Conecte o repositório no Vercel
+2. Configure:
+   - **Root Directory:** `frontend`
+   - **Build Command:** `npm run build`
+   - **Output Directory:** `dist`
+3. Adicione a variável de ambiente `VITE_API_URL` com a URL do backend
 
-## Deploy on Vercel
+### Backend (Render / Railway)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Conecte o repositório
+2. Configure:
+   - **Root Directory:** `backend`
+   - **Build Command:** `pip install -r requirements.txt`
+   - **Start Command:** `uvicorn main:app --host 0.0.0.0 --port $PORT`
+3. Adicione a variável `SECRET_KEY` com uma chave segura
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Perfis de Acesso
+
+| Perfil | Acesso |
+|--------|--------|
+| Vendedor | Cria campanhas e demandas, envia propostas |
+| Assistente | Mesmas permissões do vendedor |
+| Orçamentista | Fila de triagem, define orçamentos e SLAs |
+| Projetista | Fila de decupagem, análise técnica |
+| Gerente | Acesso total, dashboard Kanban, gestão de usuários |
+
+## Fluxo de Demandas
+
+Nova → Em Triagem → Em Projeto / Em Desenvolvimento → Orçado → Proposta Enviada → Fechado
