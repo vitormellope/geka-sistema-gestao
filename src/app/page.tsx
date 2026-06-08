@@ -1,16 +1,7 @@
 import { redirect } from 'next/navigation'
-import { auth } from '@/lib/auth'
 
-export const dynamic = 'force-dynamic'
-
-export default async function Home() {
-  try {
-    const session = await auth()
-    if (session) {
-      redirect('/dashboard')
-    }
-  } catch {
-    // If auth fails (e.g., no DB), redirect to login
-  }
+// Simple root redirect — no auth() call here to avoid cold-start crashes
+// Auth is handled by the (authenticated)/layout.tsx
+export default function Home() {
   redirect('/login')
 }
