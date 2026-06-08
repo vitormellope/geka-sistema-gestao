@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useSession, signOut } from 'next-auth/react'
 import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
@@ -70,8 +70,13 @@ export default function AuthenticatedLayout({ children }: { children: React.Reac
   const router = useRouter()
   const pathname = usePathname()
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [isClient, setIsClient] = useState(false)
 
-  if (status === 'loading') return <PageSpinner />
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
+
+  if (!isClient || status === 'loading') return <PageSpinner />
 
   if (!session?.user) {
     router.push('/login')
